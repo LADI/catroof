@@ -1,1 +1,22 @@
-ratbagd-like device manager for configuring settings of audio, midi and surface control devices.
+:keywords: catroof, ratbagd, libratbag, piper, dbus, d-bus, zbus, c, rust, python3, gtk, gnome, qt, kde
+
+= catroof
+
+.WORK IN PROGRESS
+[NOTE]
+This is Work In Progress.
+
+https://github.com/libratbag/libratbag[ratbagd]-like device manager for configuring settings of audio, midi and surface control devices.
+
+This project aims to provide:
+
+ * device manager D-Bus service that implements
+   device enumeration, configuration and profile
+   management.
+ * User interface frontends, including but not limited to:
+ ** GTK3 frotnend via GNOME introspection (gcatroof)
+    See https://github.com/libratbag/piper[piper] for the libratbag equivalent.
+ ** ncurses frontend (ncatroof)
+ ** commandline control via catroof_control
+ ** QT (KDE) frontend
+ ** WebUI frontend via D-Bus to HTTP
