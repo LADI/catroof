@@ -28,9 +28,9 @@ function CatRoofApp.AppWindow:_init(...)
 end
 
 function CatRoofApp.AppWindow:run()
-  w:show_all()
+  self:show_all()
   Gtk.main()
   return 0
 end
 
-os.exit(CatRoofApp.AppWindow().run())
+os.exit(CatRoofApp.AppWindow():run())
