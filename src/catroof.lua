@@ -44,17 +44,17 @@ local newt = pcall(function () require('newt') end)
 --print(("newt %q"):format(newt))
 
 if not opts.tui and not opts.gui and not opts.cui then
-  if progname == "ncatroof" then
+  if progname == "ncatroof" and newt then
     opts.tui = true
-  elseif progname == "gcatroof" then
+  elseif progname == "gcatroof" and lgi then
     opts.gui = true
+  else
+    -- enable gtk+ gui if available
+    if lgi then opts.gui = true end
+
+    -- enable newt tui if available
+    if newt then opts.tui = true end
   end
-
-  -- enable gtk+ gui if available
-  if lgi then opts.gui = true end
-
-  -- enable newt tui if available
-  if newt then opts.tui = true end
 end
 
 --print(("tui %q"):format(opts.tui))
