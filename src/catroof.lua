@@ -24,12 +24,6 @@ opts.tui = false
 opts.gui = false
 opts.cui = false
 
-if progname == "ncatroof" then
-  opts.tui = true
-elseif progname == "gcatroof" then
-  opts.gui = true
-end
-
 optparser_run(
   function (opt)
     --print("option", opt)
@@ -50,6 +44,12 @@ local newt = pcall(function () require('newt') end)
 --print(("newt %q"):format(newt))
 
 if not opts.tui and not opts.gui and not opts.cui then
+  if progname == "ncatroof" then
+    opts.tui = true
+  elseif progname == "gcatroof" then
+    opts.gui = true
+  end
+
   -- enable gtk+ gui if available
   if lgi then opts.gui = true end
 
