@@ -64,7 +64,7 @@ if opts.gui then
   local lgi = require("lgi")
   local assert = lgi.assert
   local GLib = lgi.GLib
-  local Gtk = lgi.Gtk
+  local Gtk = lgi.require('Gtk', '3.0')
   local Gio = lgi.Gio
   local dir = Gio.File.new_for_commandline_arg(arg[0]):get_parent()
 
