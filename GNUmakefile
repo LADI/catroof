@@ -7,7 +7,9 @@ doc: README.html
 #all: doc
 
 catroofd: src/alsa.c
-	gcc $$(pkg-config --cflags --libs alsa) -o catroofd src/alsa.c
+#	gcc $$(pkg-config --cflags --libs alsa) -o catroofd src/alsa.c
+	./waf configure
+	./waf
 
 .PHONY: uirun
 uirun:

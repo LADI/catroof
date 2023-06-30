@@ -1,0 +1,6 @@
+[submodule "waftoolchainflags"]
+	path = waftoolchainflags
+	url = ../waf-toolchain-flags
+[submodule "wafautooptions"]
+	path = wafautooptions
+	url = ../waf-autooptions
