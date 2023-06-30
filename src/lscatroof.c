@@ -17,30 +17,12 @@ catroof_enum_alsa_card_cb(
   int card_no,
   const char * card_id_str,
   const char * card_description,
-  void ** ctx_card)
+  void ** ctx_card __attribute__((unused)))
 {
-  struct catroof_superdevice * superdev_ptr;
-
   printf("card#%d\n", card_no);
   printf("  id: \"%s\"\n", card_id_str);
   printf("  description: \"%s\"\n", card_description);
   printf("  Devices:\n");
-
-  /* leak catroof_superdevice memory for now, TODO: maintain a list of superdevices and free it on exit */
-  superdev_ptr = malloc(sizeof(struct catroof_superdevice));
-  if (superdev_ptr == NULL) return false;
-
-  superdev_ptr->data.alsa.card_no = card_no;
-  strncpy(
-    superdev_ptr->data.alsa.card_id_str,
-    card_id_str,
-    CATROOF_MAX_ID_STR_SIZE);
-  strncpy(
-    superdev_ptr->data.alsa.card_description,
-    card_description,
-    CATROOF_MAX_DESCR_STR_SIZE);
-
-  *ctx_card = superdev_ptr;
   return true;
 }
 
@@ -50,7 +32,7 @@ static
 bool
 catroof_enum_alsa_device_cb(
   void * ctx __attribute__((unused)),
-  void * ctx_card __attribute__((unused)), /* card memory is leaked, see above */
+  void * ctx_card __attribute__((unused)),
   unsigned int device_type,
   int device_no,
   const char * device_id_str,

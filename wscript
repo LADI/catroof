@@ -167,6 +167,17 @@ def build(bld):
     prog.source = [
         'src/alsa.c',
         'src/catdup.c',
+        'src/lscatroof.c',
+        ]
+    prog.includes = includes
+    prog.target = 'lscatroof'
+    prog.use = ['ALSA']
+    prog.defines = ["HAVE_CONFIG_H"]
+
+    prog = bld(features=['c', 'cprogram'])
+    prog.source = [
+        'src/alsa.c',
+        'src/catdup.c',
         'src/catroofd.c',
         ]
     prog.includes = includes
