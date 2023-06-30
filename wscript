@@ -98,7 +98,7 @@ def configure(conf):
     flags.add_c('-std=gnu99')
     if conf.env['BUILD_DEVMODE']:
         flags.add_c(['-Wall', '-Wextra'])
-        #flags.add_c('-Wpedantic')
+        flags.add_c('-Wpedantic')
         flags.add_c('-Werror')
 
         # https://wiki.gentoo.org/wiki/Modern_C_porting
@@ -149,19 +149,25 @@ def build(bld):
         always=True,
         ext_out=['.h'])
 
-    # lib = bld.shlib(source = [], features = 'c cshlib', includes = [bld.path.get_bld()])
-    # lib.uselib = 'DL'
-    # lib.target = 'catroof'
-    # for source in [
-    #     'src/alsa.c',
-    #     ]:
-    #     lib.source.append(source)
+    # config.h, gitverson.h include path; public headers include path
+    includes = [bld.path.get_bld(), "../include"]
+
+    shlib = bld(features=['c', 'cshlib'])
+    shlib.includes = includes
+    shlib.target = 'catroof'
+    shlib.env.cshlib_PATTERN = '%s.so'
+    shlib.install_path = bld.env['LUA_INSTALL_CMOD']
+    shlib.uselib = ['LIBNEWT', 'LUA']
+    shlib.source = [
+        'src/alsa.c',
+        ]
 
     prog = bld(features=['c', 'cprogram'])
     prog.source = [
         'src/alsa.c',
+        'src/catroofd.c',
         ]
-    prog.includes = '.' # config.h, gitverson.h include path
+    prog.includes = includes
     prog.target = 'catroofd'
     prog.use = ['ALSA']
     prog.defines = ["HAVE_CONFIG_H"]
