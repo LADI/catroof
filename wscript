@@ -174,16 +174,16 @@ def build(bld):
     prog.use = ['ALSA']
     prog.defines = ["HAVE_CONFIG_H"]
 
-    prog = bld(features=['c', 'cprogram'])
-    prog.source = [
-        'src/alsa.c',
-        'src/catdup.c',
-        'src/catroofd.c',
-        ]
-    prog.includes = includes
-    prog.target = 'catroofd'
-    prog.use = ['ALSA']
-    prog.defines = ["HAVE_CONFIG_H"]
+    # prog = bld(features=['c', 'cprogram'])
+    # prog.source = [
+    #     'src/alsa.c',
+    #     'src/catdup.c',
+    #     'src/catroofd.c',
+    #     ]
+    # prog.includes = includes
+    # prog.target = 'catroofd'
+    # prog.use = ['ALSA']
+    # prog.defines = ["HAVE_CONFIG_H"]
 
     # install man pages
     man_pages = [
