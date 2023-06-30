@@ -85,7 +85,10 @@ if opts.gui then
   local class = CatRoofApp:class("AppWindow", Gtk.ApplicationWindow)
 
   function CatRoofApp.AppWindow:_class_init(klass)
-    local f = assert(io.open(dir:get_child('catroof.ui'):get_path(), "r"))
+    local f = io.open(dir:get_child('catroof.ui'):get_path(), "r")
+    if not f then
+      f = io.open(dir:get_child('../share/catroof/catroof.ui'):get_path(), "r")
+    end
     local template = f:read("*all")
     f:close()
 

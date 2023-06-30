@@ -143,6 +143,11 @@ def configure(conf):
     print()
 
 def build(bld):
+    bin_dir = bld.env['BINDIR']
+    share_dir = bld.options.destdir + bld.env['PREFIX'] + '/share/' + APPNAME
+    #print(bin_dir)
+    #print(share_dir)
+
     bld(rule=git_ver,
         target='gitversion.h',
         update_outputs=True,
@@ -173,6 +178,11 @@ def build(bld):
     prog.target = 'lscatroof'
     prog.use = ['ALSA']
     prog.defines = ["HAVE_CONFIG_H"]
+
+    bld.install_as(bin_dir + "/" + "catroof", 'src/catroof.lua', chmod=Utils.O755)
+    bld.symlink_as(bin_dir + "/" + "ncatroof", 'catroof')
+    bld.symlink_as(bin_dir + "/" + "gcatroof", 'catroof')
+    bld.install_as(share_dir + "/" + "catroof.ui", 'src/catroof.ui')
 
     # prog = bld(features=['c', 'cprogram'])
     # prog.source = [
