@@ -10,16 +10,6 @@
 
 #include <catroof/catroof.h>
 
-#define CATROOF_MAX_ID_STR_SIZE 2048
-#define CATROOF_MAX_DESCR_STR_SIZE 2048
-
-struct catroof_superdevice
-{
-  int card_no;
-  char card_id_str[CATROOF_MAX_ID_STR_SIZE];
-  char card_description[CATROOF_MAX_DESCR_STR_SIZE];
-};
-
 static
 bool
 catroof_enum_alsa_card_cb(
@@ -36,12 +26,19 @@ catroof_enum_alsa_card_cb(
   printf("  description: \"%s\"\n", card_description);
   printf("  Devices:\n");
 
+  /* leak catroof_superdevice memory for now, TODO: maintain a list of superdevices and free it on exit */
   superdev_ptr = malloc(sizeof(struct catroof_superdevice));
   if (superdev_ptr == NULL) return false;
 
-  superdev_ptr->card_no = card_no;
-  strncpy(superdev_ptr->card_id_str, card_id_str, CATROOF_MAX_ID_STR_SIZE);
-  strncpy(superdev_ptr->card_description, card_description, CATROOF_MAX_DESCR_STR_SIZE);
+  superdev_ptr->data.alsa.card_no = card_no;
+  strncpy(
+    superdev_ptr->data.alsa.card_id_str,
+    card_id_str,
+    CATROOF_MAX_ID_STR_SIZE);
+  strncpy(
+    superdev_ptr->data.alsa.card_description,
+    card_description,
+    CATROOF_MAX_DESCR_STR_SIZE);
 
   *ctx_card = superdev_ptr;
   return true;
@@ -56,18 +53,10 @@ catroof_enum_alsa_device_cb(
   void * ctx_card,
   unsigned int device_type,
   int device_no,
+  const char * device_id_str,
   unsigned int capture_subdevices,
   unsigned int playback_subdevices)
 {
-  char device_id_str[CATROOF_MAX_ID_STR_SIZE * 2];
-
-  snprintf(
-    device_id_str,
-    sizeof(device_id_str),
-    "%s,%d",
-    superdevice_ptr->card_id_str,
-    device_no);
-
   switch (device_type)
   {
   case CATROOF_DEVICE_TYPE_AUDIO:

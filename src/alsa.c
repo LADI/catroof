@@ -69,6 +69,21 @@ catroof_alsa_pcm_get_info(
   return snd_pcm_info_get_subdevices_count(info);
 }
 
+static
+void
+catroof_alsa_compose_device_id(
+  const char * card_id_str,
+  int device_no,
+  char * device_id_str)
+{
+  snprintf(
+    device_id_str,
+    CATROOF_MAX_DEVICE_ID_STR_SIZE,
+    "%s,%d",
+    card_id_str,
+    device_no);
+}
+
 bool
 catroof_alsa_enum_devices(
   void * ctx,
@@ -80,18 +95,19 @@ catroof_alsa_enum_devices(
   snd_ctl_card_info_t * info;
   snd_pcm_info_t * pcminfo_capture;
   snd_pcm_info_t * pcminfo_playback;
-  int card_no = -1;
-  char card_id_str[1024];
-  char card_description[1024];
+  int card_no;
+  char card_id_str[CATROOF_MAX_ID_STR_SIZE];
+  char card_description[CATROOF_MAX_DESCR_STR_SIZE];
+  char device_id_str[CATROOF_MAX_DEVICE_ID_STR_SIZE];
   int device_no;
-  unsigned int pcm_capture_subdevices;
-  unsigned int pcm_playback_subdevices;
+  unsigned int capture_subdevices;
+  unsigned int playback_subdevices;
   snd_rawmidi_info_t * rawmidiinfo_capture;
   snd_rawmidi_info_t * rawmidiinfo_playback;
-  unsigned int rawmidi_capture_subdevices;
-  unsigned int rawmidi_playback_subdevices;
   void * ctx_card;
   bool ret;
+  char * name_capture;
+  char * name_playback;
 
   ret = false;
 
@@ -101,6 +117,7 @@ catroof_alsa_enum_devices(
   snd_rawmidi_info_alloca(&rawmidiinfo_capture);
   snd_rawmidi_info_alloca(&rawmidiinfo_playback);
 
+  card_no = -1;
   while (snd_card_next(&card_no) >= 0 && card_no >= 0)
   {
     snprintf(card_id_str, sizeof(card_id_str), "hw:%d", card_no);
@@ -123,69 +140,83 @@ catroof_alsa_enum_devices(
 
       while (snd_ctl_pcm_next_device(handle, &device_no) >= 0 && device_no != -1)
       {
-        char * name_capture;
-        pcm_capture_subdevices =
+        capture_subdevices =
           catroof_alsa_pcm_get_info(
             handle,
             device_no,
             SND_PCM_STREAM_CAPTURE,
             &name_capture);
+        free(name_capture);
 
-        char * name_playback;
-        pcm_playback_subdevices =
+        playback_subdevices =
           catroof_alsa_pcm_get_info(
             handle,
             device_no,
             SND_PCM_STREAM_PLAYBACK,
             &name_playback);
+        free(name_playback);
 
-        if (pcm_capture_subdevices == 0 &&
-            pcm_playback_subdevices == 0)
+        if (capture_subdevices == 0 &&
+            playback_subdevices == 0)
           continue;
+
+        catroof_alsa_compose_device_id(
+          card_id_str,
+          device_no,
+          device_id_str);
 
         if (!devices_cb(
               ctx,
               ctx_card,
               CATROOF_DEVICE_TYPE_AUDIO,
               device_no,
-              pcm_playback_subdevices,
-              pcm_capture_subdevices))
+              device_id_str,
+              playback_subdevices,
+              capture_subdevices))
           goto close;
       }
 
-      for (int device = -1;;)
+      device_no = -1;
+      while (true)
       {
-        iret = snd_ctl_rawmidi_next_device(handle, &device);
+        iret = snd_ctl_rawmidi_next_device(handle, &device_no);
         if (iret) continue;
-        if (device == -1)  break;
+        if (device_no == -1)  break;
 
-        char * name_capture;
-        rawmidi_capture_subdevices =
+        capture_subdevices =
           catroof_alsa_rawmidi_get_info(
             handle,
-            device,
+            device_no,
             SND_RAWMIDI_STREAM_INPUT,
             &name_capture);
+        free(name_capture);
 
-        char * name_playback;
-        rawmidi_playback_subdevices =
+        playback_subdevices =
           catroof_alsa_rawmidi_get_info(
             handle,
-            device,
+            device_no,
             SND_RAWMIDI_STREAM_OUTPUT,
             &name_playback);
+        free(name_playback);
 
-        if (rawmidi_capture_subdevices == 0 &&
-            rawmidi_playback_subdevices == 0)
+        if (capture_subdevices == 0 &&
+            playback_subdevices == 0)
           continue;
+
+        catroof_alsa_compose_device_id(
+          card_id_str,
+          device_no,
+          device_id_str);
+
 
         if (!devices_cb(
               ctx,
               ctx_card,
               CATROOF_DEVICE_TYPE_MIDI,
-              device,
-              rawmidi_playback_subdevices,
-              rawmidi_capture_subdevices))
+              device_no,
+              device_id_str,
+              playback_subdevices,
+              capture_subdevices))
           goto close;
       }
 

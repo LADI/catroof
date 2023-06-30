@@ -13,7 +13,7 @@ extern "C" {
 } /* Adjust editor indent */
 #endif
 
-#define CATROOF_DEVICE_TYPE_INVALID 0
+#define CATROOF_DEVICE_TYPE_INVALID 0 /* invalid value (for nullable types) */
 #define CATROOF_DEVICE_TYPE_AUDIO   1 /* PCM samples */
 #define CATROOF_DEVICE_TYPE_MIDI    2 /* MIDI events */
 #define CATROOF_DEVICE_TYPE_SURFACE 3 /* Control Surface (human interaction device) */
@@ -21,6 +21,24 @@ extern "C" {
 #define CATROOF_DEVICE_TYPE_CPU     5 /* CPU (isolated) core */
 #define CATROOF_DEVICE_TYPE_FPU     6 /* FPU (isolated) core */
 #define CATROOF_DEVICE_TYPE_GPU     7 /* GPU core */
+
+#define CATROOF_MAX_ID_STR_SIZE 2048
+#define CATROOF_MAX_DEVICE_ID_STR_SIZE (CATROOF_MAX_ID_STR_SIZE * 2)
+#define CATROOF_MAX_DESCR_STR_SIZE 2048
+
+struct catroof_superdevice
+{
+  unsigned int superdevice_type; /* one of CATROOF_DEVICE_TYPE_XXX constants */
+  union
+  {
+    struct
+    {
+      int card_no;
+      char card_id_str[CATROOF_MAX_ID_STR_SIZE];
+      char card_description[CATROOF_MAX_DESCR_STR_SIZE];
+    } alsa;
+  } data;
+};
 
 typedef
 bool
@@ -38,6 +56,7 @@ bool
   void * ctx_card,
   unsigned int device_type,
   int device_no,
+  const char * device_id_str,
   unsigned int capture_subdevices,
   unsigned int playback_subdevices);
 
