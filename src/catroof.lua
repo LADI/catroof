@@ -37,11 +37,25 @@ optparser_run(
   end)
 
 local os = require("os")
-local lgi = pcall(function () require("lgi") end)
-local newt = pcall(function () require('newt') end)
+local lgi_found
+local lgi
+lgi_found, lgi = pcall(function () return require("lgi") end)
+local gtk_found
+local Gtk
+if lgi_found then
+  gtk_found, Gtk = pcall(function () return lgi.require('Gtk', '3.0') end)
+  if not gtk_found then Gtk = nil end
+else
+  lgi = nil
+end
+local newt_found
+local newt
+newt_found, newt = pcall(function () return require('newt') end)
+if not newt_found then newt = nil end
 
---print(("lgi %q"):format(lgi))
---print(("newt %q"):format(newt))
+-- print(("lgi %s"):format(tostring(lgi)))
+-- print(("Gtk %s"):format(tostring(Gtk)))
+-- print(("newt %s"):format(tostring(newt)))
 
 if not opts.tui and not opts.gui and not opts.cui then
   if progname == "ncatroof" and newt then
@@ -50,7 +64,7 @@ if not opts.tui and not opts.gui and not opts.cui then
     opts.gui = true
   else
     -- enable gtk+ gui if available
-    if lgi then opts.gui = true end
+    if lgi and Gtk then opts.gui = true end
 
     -- enable newt tui if available
     if newt then opts.tui = true end
@@ -61,12 +75,11 @@ end
 --print(("gui %q"):format(opts.gui))
 
 if opts.gui then
-  local lgi = require("lgi")
-  local assert = lgi.assert
+  Gtk = lgi.require('Gtk', '3.0')
   local GLib = lgi.GLib
-  local Gtk = lgi.require('Gtk', '3.0')
   local Gio = lgi.Gio
   local dir = Gio.File.new_for_commandline_arg(arg[0]):get_parent()
+  local assert = lgi.assert
 
   local CatRoofApp = lgi.package("CatRoof")
   local class = CatRoofApp:class("AppWindow", Gtk.ApplicationWindow)
