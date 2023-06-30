@@ -160,11 +160,13 @@ def build(bld):
     shlib.uselib = ['LIBNEWT', 'LUA']
     shlib.source = [
         'src/alsa.c',
+        'src/catdup.c',
         ]
 
     prog = bld(features=['c', 'cprogram'])
     prog.source = [
         'src/alsa.c',
+        'src/catdup.c',
         'src/catroofd.c',
         ]
     prog.includes = includes
