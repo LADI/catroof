@@ -157,7 +157,7 @@ def build(bld):
     shlib.target = 'catroof'
     shlib.env.cshlib_PATTERN = '%s.so'
     shlib.install_path = bld.env['LUA_INSTALL_CMOD']
-    shlib.uselib = ['LIBNEWT', 'LUA']
+    shlib.uselib = ['ALSA', 'LUA']
     shlib.source = [
         'src/alsa.c',
         'src/catdup.c',
