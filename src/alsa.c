@@ -140,6 +140,7 @@ catroof_alsa_enum_devices(
 
       while (snd_ctl_pcm_next_device(handle, &device_no) >= 0 && device_no != -1)
       {
+        name_capture = NULL;
         capture_subdevices =
           catroof_alsa_pcm_get_info(
             handle,
@@ -148,6 +149,7 @@ catroof_alsa_enum_devices(
             &name_capture);
         free(name_capture);
 
+        name_playback = NULL;
         playback_subdevices =
           catroof_alsa_pcm_get_info(
             handle,
@@ -183,6 +185,7 @@ catroof_alsa_enum_devices(
         if (iret) continue;
         if (device_no == -1)  break;
 
+        name_capture = NULL;
         capture_subdevices =
           catroof_alsa_rawmidi_get_info(
             handle,
@@ -191,6 +194,7 @@ catroof_alsa_enum_devices(
             &name_capture);
         free(name_capture);
 
+        name_playback = NULL;
         playback_subdevices =
           catroof_alsa_rawmidi_get_info(
             handle,
