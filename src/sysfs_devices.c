@@ -115,20 +115,38 @@ static bool catroof_scan_sysfs_internal(const char * dirpath)
 
   if (has_subsystem && (has_sound || has_input))
   {
-#if 0
-    printf("devpath:   %s\n", device_path);
-    printf("subsystem: %s", basename(subsystem));
-    if (has_sound) printf(" [SOUND]");
-    if (has_input) printf(" [INPUT]");
-    printf("\n");
-#else
     printf("-------------------------------------------------------------------------\n");
     printf("% 2lu % 9s ", catroof_device_no, basename(subsystem));
     if (has_sound) printf("[SOUND]\t");
     if (has_input) printf("[INPUT]\t");
     printf("%s", device_path);
     printf("\n");
+#if 0
+    if (manufacturer != NULL && product != NULL)
+    {
+      printf("             [%s:%s]", manufacturer, product);
+      if (serial != NULL) printf(":%s", serial);
+      printf("\n");
+    }
 #endif
+    if (has_sound)
+    {
+      //char * cmd = catdupv("ls -la \"", SYSFS_ROOT, device_path, "/sound\"", NULL);
+      //system(cmd);
+      //free(cmd);
+      for (int cardno = 0; cardno < /* FIXME */ 9; cardno++)
+      {
+        char cardno_str[2];
+        cardno_str[0] = '0' + cardno;
+        char * path = catdupv(SYSFS_ROOT, device_path, "/sound/card", cardno_str, NULL);
+        //printf("%s\n", path);
+        if (lstat(path, &st) == 0)
+        {
+          printf("ALSA CARD NO: %s\n", cardno_str);
+        }
+        free(path);
+      }
+    }
     catroof_device_no++;
   }
 
