@@ -75,6 +75,13 @@ def options(opt):
         default=False,
     )
 
+    opt.add_auto_option(
+        'debug',
+        help='Enable debug symbols',
+        conf_dest='BUILD_DEBUG',
+        default=False,
+    )
+
     opt.add_option('--mandir', type='string', help="Manpage directory [Default: <prefix>/share/man]")
 
 def configure(conf):
@@ -116,6 +123,9 @@ def configure(conf):
             flags.add_c('-Werror=implicit-int')
             flags.add_c('-Werror=incompatible-pointer-types')
             flags.add_c('-Werror=strict-prototypes')
+    if conf.env['BUILD_DEBUG']:
+        flags.add_c(['-O0', '-g', '-fno-omit-frame-pointer'])
+        flags.add_link('-g')
 
     flags.flush()
 
