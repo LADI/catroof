@@ -67,6 +67,9 @@ catroof_enum_alsa_device_cb(
 
 #undef superdevice_ptr
 
+/* sysfs_devices.c */
+bool catroof_scan_sysfs(void);
+
 void catroof_enum_devices(void)
 {
   if (!catroof_alsa_enum_devices(
@@ -76,6 +79,8 @@ void catroof_enum_devices(void)
   {
     fprintf(stderr, "ALSA device enumeration failed\n");
   }
+
+  catroof_scan_sysfs();
 }
 
 int

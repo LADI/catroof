@@ -235,6 +235,7 @@ def build(bld):
         'src/alsa.c',
         'src/catdup.c',
         'src/log.c',
+        'src/sysfs_devices.c',
         'src/lscatroof.c',
         ]
     prog.includes = includes
