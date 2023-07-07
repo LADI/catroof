@@ -78,7 +78,10 @@ void catroof_enum_devices(void)
   }
 }
 
-int main(void)
+int
+main(
+  int UNUSED(argc),
+  const char * const * UNUSED(argv))
 {
   catroof_enum_devices();
   return 0;
