@@ -23,6 +23,7 @@ static bool catroof_scan_sysfs_internal(const char * dirpath)
   bool success;
   bool has_subsystem;
   bool has_sound;
+  bool has_input;
   char subsystem[1024];
   size_t len;
   const char * device_path;
@@ -38,6 +39,7 @@ static bool catroof_scan_sysfs_internal(const char * dirpath)
 
   has_subsystem = false;
   has_sound = false;
+  has_input = false;
   while ((dentry_ptr = readdir(dir)) != NULL)
   {
     if (strcmp(dentry_ptr->d_name, ".") == 0 ||
@@ -77,6 +79,10 @@ static bool catroof_scan_sysfs_internal(const char * dirpath)
       {
         has_sound = true;
       }
+      if (strcmp(dentry_ptr->d_name, "input") == 0)
+      {
+        has_input = true;
+      }
       if (S_ISDIR(st.st_mode))
       {
         if (!catroof_scan_sysfs_internal(entry_fullpath))
@@ -101,10 +107,22 @@ static bool catroof_scan_sysfs_internal(const char * dirpath)
     free(entry_fullpath);
   }
 
-  if (has_subsystem && has_sound)
+  if (has_subsystem && (has_sound || has_input))
   {
+#if 0
     printf("devpath:   %s\n", device_path);
-    printf("subsystem: %s\n", basename(subsystem));
+    printf("subsystem: %s", basename(subsystem));
+    if (has_sound) printf(" [SOUND]");
+    if (has_input) printf(" [INPUT]");
+    printf("\n");
+#else
+    printf("=========================================================================\n");
+    printf("% 10s\t", basename(subsystem));
+    if (has_sound) printf("[SOUND]\t");
+    if (has_input) printf("[INPUT]\t");
+    printf("%s", device_path);
+    printf("\n");
+#endif
   }
 
   success = true;
