@@ -34,14 +34,19 @@ char * read_file_contents(const char * filename)
     return NULL;
   }
 
-  if (read(fd, buffer, (size_t)st.st_size) != (ssize_t)st.st_size)
+  ssize_t sret = read(fd, buffer, (size_t)st.st_size);
+  if (sret == -1 || sret == 0 || sret > (ssize_t)st.st_size)
   {
     free(buffer);
     buffer = NULL;
   }
   else
   {
-    buffer[st.st_size] = 0;
+    //printf("[%zd]\n", sret);
+    if (sret > 0 && buffer[sret - 1] == '\n')
+      buffer[sret - 1] = 0;
+    else
+      buffer[sret] = 0;
   }
 
   close(fd);
