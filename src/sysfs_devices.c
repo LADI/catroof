@@ -13,6 +13,12 @@
 
 #define SYSFS_ROOT "/sys/devices"
 
+/* N is [1..+INF], have catroof device indeces 1-based,
+ * which is both natural and intentionally made not to match
+ * the ALSA card nubering which is 0-based. */
+#define CATROOF_DEVICE_NO_START 1
+static unsigned long catroof_device_no = CATROOF_DEVICE_NO_START;
+
 /* recurse sysfs */
 static bool catroof_scan_sysfs_internal(const char * dirpath)
 {
@@ -116,13 +122,14 @@ static bool catroof_scan_sysfs_internal(const char * dirpath)
     if (has_input) printf(" [INPUT]");
     printf("\n");
 #else
-    printf("=========================================================================\n");
-    printf("% 10s\t", basename(subsystem));
+    printf("-------------------------------------------------------------------------\n");
+    printf("% 2lu % 9s ", catroof_device_no, basename(subsystem));
     if (has_sound) printf("[SOUND]\t");
     if (has_input) printf("[INPUT]\t");
     printf("%s", device_path);
     printf("\n");
 #endif
+    catroof_device_no++;
   }
 
   success = true;
@@ -139,5 +146,7 @@ exit:
 
 bool catroof_scan_sysfs(void)
 {
+  printf("=========================================================================\n");
+  printf(" N SUBSYSTEM DEVTYPE\tDEVPATH\n");
   return catroof_scan_sysfs_internal(SYSFS_ROOT);
 }
