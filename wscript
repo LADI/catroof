@@ -235,6 +235,7 @@ def build(bld):
         'src/alsa.c',
         'src/catdup.c',
         'src/log.c',
+        'src/file.c',
         'src/sysfs_devices.c',
         'src/lscatroof.c',
         ]

@@ -7,9 +7,11 @@
 #include <errno.h>
 #include <sys/stat.h>
 #include <unistd.h>
+#include <stdlib.h>
 #include <libgen.h>
 
 #include "common.h"
+#include "file.h"
 
 #define SYSFS_ROOT "/sys/devices"
 
@@ -30,6 +32,9 @@ static bool catroof_scan_sysfs_internal(const char * dirpath)
   bool has_subsystem;
   bool has_sound;
   bool has_input;
+  char * manufacturer;
+  char * product;
+  char * serial;
   char subsystem[1024];
   size_t len;
   const char * device_path;
@@ -46,6 +51,9 @@ static bool catroof_scan_sysfs_internal(const char * dirpath)
   has_subsystem = false;
   has_sound = false;
   has_input = false;
+  manufacturer = NULL;
+  product = NULL;
+  serial = NULL;
   while ((dentry_ptr = readdir(dir)) != NULL)
   {
     if (strcmp(dentry_ptr->d_name, ".") == 0 ||
@@ -89,6 +97,21 @@ static bool catroof_scan_sysfs_internal(const char * dirpath)
       {
         has_input = true;
       }
+      if (strcmp(dentry_ptr->d_name, "manufacturer") == 0)
+      {
+        if (manufacturer == NULL)
+          manufacturer = read_file_contents(entry_fullpath);
+      }
+      if (strcmp(dentry_ptr->d_name, "product") == 0)
+      {
+        if (product == NULL)
+          product = read_file_contents(entry_fullpath);
+      }
+      if (strcmp(dentry_ptr->d_name, "serial") == 0)
+      {
+        if (serial == NULL)
+          serial = read_file_contents(entry_fullpath);
+      }
       if (S_ISDIR(st.st_mode))
       {
         if (!catroof_scan_sysfs_internal(entry_fullpath))
@@ -113,24 +136,23 @@ static bool catroof_scan_sysfs_internal(const char * dirpath)
     free(entry_fullpath);
   }
 
-  if (has_subsystem && (has_sound || has_input))
+  if (has_subsystem &&
+      (has_sound || has_input ||
+       (manufacturer != NULL && product != NULL)))
   {
     printf("-------------------------------------------------------------------------\n");
     printf("% 2lu % 9s ", catroof_device_no, basename(subsystem));
-    if (has_sound) printf("[SOUND]\t");
-    if (has_input) printf("[INPUT]\t");
     printf("%s", device_path);
     printf("\n");
-#if 0
     if (manufacturer != NULL && product != NULL)
     {
-      printf("             [%s:%s]", manufacturer, product);
-      if (serial != NULL) printf(":%s", serial);
-      printf("\n");
+      printf("         [MNFCTR] %s\n", manufacturer);
+      printf("         [PRODCT] %s\n", product);
+      if (serial != NULL) printf("         [SERIAL] %s\n", serial);
     }
-#endif
     if (has_sound)
     {
+      printf("         [SOUND] ALSA CARD NO:");
       //char * cmd = catdupv("ls -la \"", SYSFS_ROOT, device_path, "/sound\"", NULL);
       //system(cmd);
       //free(cmd);
@@ -142,13 +164,19 @@ static bool catroof_scan_sysfs_internal(const char * dirpath)
         //printf("%s\n", path);
         if (lstat(path, &st) == 0)
         {
-          printf("ALSA CARD NO: %s\n", cardno_str);
+          printf(" %s", cardno_str);
         }
         free(path);
       }
+      printf("\n");
     }
+    if (has_input) printf("         [INPUT]\n");
     catroof_device_no++;
   }
+
+  free(manufacturer);
+  free(product);
+  free(serial);
 
   success = true;
 
@@ -165,6 +193,6 @@ exit:
 bool catroof_scan_sysfs(void)
 {
   printf("=========================================================================\n");
-  printf(" N SUBSYSTEM DEVTYPE\tDEVPATH\n");
+  printf(" N SUBSYSTEM DEVPATH\n");
   return catroof_scan_sysfs_internal(SYSFS_ROOT);
 }
