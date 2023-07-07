@@ -3,17 +3,13 @@
 /* SPDX-FileCopyrightText: Copyright © 2023 Nedko Arnaudov */
 /* SPDX-License-Identifier: GPL-3 */
 
-#include <stdbool.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-
+#include "common.h"
 #include <catroof/catroof.h>
 
 static
 bool
 catroof_enum_alsa_card_cb(
-  void * ctx __attribute__((unused)),
+  void * UNUSED(ctx),
   int card_no,
   const char * card_id_str,
   const char * card_description,
@@ -49,8 +45,8 @@ catroof_enum_alsa_card_cb(
 static
 bool
 catroof_enum_alsa_device_cb(
-  void * ctx __attribute__((unused)),
-  void * ctx_card __attribute__((unused)), /* card memory is leaked, see above */
+  void * UNUSED(ctx),
+  void * UNUSED(ctx_card), /* card memory is leaked, see above */
   unsigned int device_type,
   int device_no,
   const char * device_id_str,

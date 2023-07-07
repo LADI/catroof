@@ -7,7 +7,7 @@
 /* catroof code related to ALSA subsystem (Linux) */
 /* ALSA PCM and RAW MIDI device handling */
 
-#include <stdbool.h>
+#include "common.h"
 #include <alsa/asoundlib.h>
 #include <catroof/catroof.h>
 

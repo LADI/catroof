@@ -84,13 +84,52 @@ def options(opt):
 
     opt.add_option('--mandir', type='string', help="Manpage directory [Default: <prefix>/share/man]")
 
+    opt.add_option('--enable-pkg-config-dbus-service-dir', action='store_true', default=False, help='force D-Bus service install dir to be one returned by pkg-config')
+
 def configure(conf):
     conf.load('compiler_c')
     conf.load('wafautooptions')
 
     flags = WafToolchainFlags(conf)
 
-    conf.check_cfg(package='alsa', mandatory=True, args='--cflags --libs')
+    conf.check_cfg(
+        package = 'alsa',
+        mandatory = True,
+        errmsg = "not installed, see http://www.alsa-project.org/",
+        args = '--cflags --libs')
+
+    conf.check_cfg(
+        package = 'dbus-1',
+        atleast_version = '1.0.0',
+        mandatory = True,
+        errmsg = "not installed, see http://dbus.freedesktop.org/",
+        args = '--cflags --libs')
+
+    dbus_dir = conf.check_cfg(
+        package='dbus-1',
+        args='--variable=session_bus_services_dir',
+        msg="Retrieving D-Bus services dir")
+    if not dbus_dir:
+        return
+
+    dbus_dir = dbus_dir.strip()
+    conf.env['DBUS_SERVICES_DIR_REAL'] = dbus_dir
+
+    if Options.options.enable_pkg_config_dbus_service_dir:
+        conf.env['DBUS_SERVICES_DIR'] = dbus_dir
+    else:
+        conf.env['DBUS_SERVICES_DIR'] = os.path.join(
+            os.path.normpath(conf.env['PREFIX']),
+            'share',
+            'dbus-1',
+            'services')
+
+    conf.check_cfg(
+        package = 'cdbus-1',
+        atleast_version = '1.0.0',
+        mandatory = True,
+        errmsg = "not installed, see https://github.com/LADI/cdbus",
+        args = '--cflags --libs')
 
     if Options.options.mandir:
         conf.env['MANDIR'] = Options.options.mandir
@@ -107,6 +146,7 @@ def configure(conf):
         flags.add_c(['-Wall', '-Wextra'])
         flags.add_c('-Wpedantic')
         flags.add_c('-Werror')
+        flags.add_c(['-Wno-variadic-macros', '-Wno-gnu-zero-variadic-macro-arguments'])
 
         # https://wiki.gentoo.org/wiki/Modern_C_porting
         if conf.env['CC'] == 'clang':
@@ -149,6 +189,17 @@ def configure(conf):
     display_msg(conf, "Install prefix", conf.env['PREFIX'], 'CYAN')
     display_msg(conf, "Compiler", conf.env['CC'][0], 'CYAN')
     conf.summarize_auto_options()
+    if conf.env['DBUS_SERVICES_DIR'] != conf.env['DBUS_SERVICES_DIR_REAL']:
+        display_msg(conf)
+        display_line(conf,     "WARNING: D-Bus session services directory as reported by pkg-config is", 'RED')
+        display_raw_text(conf, "WARNING:", 'RED')
+        display_line(conf,      conf.env['DBUS_SERVICES_DIR_REAL'], 'CYAN')
+        display_line(conf,     'WARNING: but service file will be installed in', 'RED')
+        display_raw_text(conf, "WARNING:", 'RED')
+        display_line(conf,      conf.env['DBUS_SERVICES_DIR'], 'CYAN')
+        display_line(conf,     'WARNING: You may need to adjust your D-Bus configuration after installing ladish', 'RED')
+        display_line(conf,     'WARNING: You can override dbus service install directory', 'RED')
+        display_line(conf,     'WARNING: with --enable-pkg-config-dbus-service-dir option to this script', 'RED')
     flags.print()
     print()
 
@@ -172,21 +223,23 @@ def build(bld):
     shlib.target = 'catroof'
     shlib.env.cshlib_PATTERN = '%s.so'
     shlib.install_path = bld.env['LUA_INSTALL_CMOD']
-    shlib.uselib = ['ALSA', 'LUA']
+    shlib.uselib = ['ALSA', 'LUA', 'CDBUS-1']
     shlib.source = [
         'src/alsa.c',
         'src/catdup.c',
+        'src/log.c',
         ]
 
     prog = bld(features=['c', 'cprogram'])
     prog.source = [
         'src/alsa.c',
         'src/catdup.c',
+        'src/log.c',
         'src/lscatroof.c',
         ]
     prog.includes = includes
     prog.target = 'lscatroof'
-    prog.use = ['ALSA']
+    prog.use = ['ALSA', 'CDBUS-1']
     prog.defines = ["HAVE_CONFIG_H"]
 
     bld.install_as(bin_dir + "/" + "catroof", 'src/catroof.lua', chmod=Utils.O755)
@@ -197,12 +250,13 @@ def build(bld):
     # prog = bld(features=['c', 'cprogram'])
     # prog.source = [
     #     'src/alsa.c',
+    #     'src/log.c',
     #     'src/catdup.c',
     #     'src/catroofd.c',
     #     ]
     # prog.includes = includes
     # prog.target = 'catroofd'
-    # prog.use = ['ALSA']
+    # prog.use = ['ALSA', 'CDBUS-1']
     # prog.defines = ["HAVE_CONFIG_H"]
 
     # install man pages
