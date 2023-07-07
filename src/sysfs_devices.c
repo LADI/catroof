@@ -146,13 +146,13 @@ static bool catroof_scan_sysfs_internal(const char * dirpath)
     printf("\n");
     if (manufacturer != NULL && product != NULL)
     {
-      printf("         [MNFCTR] %s\n", manufacturer);
-      printf("         [PRODCT] %s\n", product);
-      if (serial != NULL) printf("         [SERIAL] %s\n", serial);
+      printf("             [MNFCTR] %s\n", manufacturer);
+      printf("             [PRODCT] %s\n", product);
+      if (serial != NULL) printf("             [SERIAL] %s\n", serial);
     }
     if (has_sound)
     {
-      printf("         [SOUND] ALSA CARD NO:");
+      printf("             [SOUND] ALSA CARD NO:");
       //char * cmd = catdupv("ls -la \"", SYSFS_ROOT, device_path, "/sound\"", NULL);
       //system(cmd);
       //free(cmd);
@@ -170,7 +170,7 @@ static bool catroof_scan_sysfs_internal(const char * dirpath)
       }
       printf("\n");
     }
-    if (has_input) printf("         [INPUT]\n");
+    if (has_input) printf("             [INPUT]\n");
     catroof_device_no++;
   }
 
