@@ -83,11 +83,24 @@ void catroof_enum_devices(void)
   catroof_scan_sysfs();
 }
 
+static void print_logo()
+{
+  printf("            _                    __ \n");
+  printf("           | |                  / _|\n");
+  printf("   ___ __ _| |_ _ __ ___   ___ | |_ \n");
+  printf("  / __/ _` | __| '__/ _ \\ / _ \\|  _|\n");
+  printf(" | (_| (_| | |_| | | (_) | (_) | |  \n");
+  printf("  \\___\\__,_|\\__|_|  \\___/ \\___/|_|  \n");
+  printf("                                    \n");
+  printf("                                    \n");
+}
+
 int
 main(
   int UNUSED(argc),
   const char * const * UNUSED(argv))
 {
+  print_logo();
   catroof_enum_devices();
   return 0;
 }
