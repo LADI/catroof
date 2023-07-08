@@ -15,5 +15,5 @@ catroofd: src/alsa.c
 uirun:
 	./src/catroof.lua
 
-README.html: README.adoc
+README.html: README.adoc README-docinfo.html README-docinfo-header.html
 	asciidoc -b html5 -a data-uri -a icons --theme ladi -o README.html README.adoc
