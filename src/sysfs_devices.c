@@ -38,6 +38,7 @@ static bool catroof_scan_sysfs_internal(const char * dirpath)
   char subsystem[1024];
   size_t len;
   const char * device_path;
+  char * wwid;
 
   success = false;
 
@@ -54,6 +55,7 @@ static bool catroof_scan_sysfs_internal(const char * dirpath)
   manufacturer = NULL;
   product = NULL;
   serial = NULL;
+  wwid = NULL;
   while ((dentry_ptr = readdir(dir)) != NULL)
   {
     if (strcmp(dentry_ptr->d_name, ".") == 0 ||
@@ -112,6 +114,10 @@ static bool catroof_scan_sysfs_internal(const char * dirpath)
         if (serial == NULL)
           serial = read_file_contents(entry_fullpath);
       }
+      if (strcmp(dentry_ptr->d_name, "wwid") == 0)
+      {
+        wwid = read_file_contents(entry_fullpath);
+      }
       if (S_ISDIR(st.st_mode))
       {
         if (!catroof_scan_sysfs_internal(entry_fullpath))
@@ -138,6 +144,7 @@ static bool catroof_scan_sysfs_internal(const char * dirpath)
 
   if (has_subsystem &&
       (has_sound || has_input ||
+       wwid != NULL ||
        (manufacturer != NULL && product != NULL)))
   {
     printf("-------------------------------------------------------------------------\n");
@@ -150,6 +157,7 @@ static bool catroof_scan_sysfs_internal(const char * dirpath)
       printf("             [PRODCT] %s\n", product);
       if (serial != NULL) printf("             [SERIAL] %s\n", serial);
     }
+    if (wwid != NULL) printf("             [WWID] %s\n");
     if (has_sound)
     {
       printf("             [SOUND] ALSA CARD NO:");
@@ -178,6 +186,7 @@ static bool catroof_scan_sysfs_internal(const char * dirpath)
   free(manufacturer);
   free(product);
   free(serial);
+  free(wwid);
 
   success = true;
 
