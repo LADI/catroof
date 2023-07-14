@@ -157,7 +157,7 @@ static bool catroof_scan_sysfs_internal(const char * dirpath)
       printf("             [PRODCT] %s\n", product);
       if (serial != NULL) printf("             [SERIAL] %s\n", serial);
     }
-    if (wwid != NULL) printf("             [WWID] %s\n");
+    if (wwid != NULL) printf("             [WWID] %s\n", wwid);
     if (has_sound)
     {
       printf("             [SOUND] ALSA CARD NO:");
