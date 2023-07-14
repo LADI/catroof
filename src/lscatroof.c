@@ -5,6 +5,7 @@
 
 #include "common.h"
 #include <catroof/catroof.h>
+#include "gitversion.h"
 
 static
 bool
@@ -92,6 +93,9 @@ static void print_logo(void)
   printf(" | (_| (_| | |_| | | (_) | (_) | |  \n");
   printf("  \\___\\__,_|\\__|_|  \\___/ \\___/|_|  \n");
   printf("                                    \n");
+  printf("                                    \n");
+  printf("Version %s %s\n", CATROOF_VERSION, GIT_VERSION);
+  printf("Built %s\n", BUILD_TIMESTAMP);
   printf("                                    \n");
 }
 
