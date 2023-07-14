@@ -160,6 +160,7 @@ static bool catroof_scan_sysfs_internal(const char * dirpath)
       {
         char cardno_str[2];
         cardno_str[0] = '0' + cardno;
+        cardno_str[1] = 0;
         char * path = catdupv(SYSFS_ROOT, device_path, "/sound/card", cardno_str, NULL);
         //printf("%s\n", path);
         if (lstat(path, &st) == 0)
