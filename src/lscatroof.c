@@ -83,7 +83,7 @@ void catroof_enum_devices(void)
   catroof_scan_sysfs();
 }
 
-static void print_logo()
+static void print_logo(void)
 {
   printf("            _                    __ \n");
   printf("           | |                  / _|\n");
