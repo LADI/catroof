@@ -815,8 +815,8 @@ WebUI frontend via D-Bus to HTTP
   \___\__,_|\__|_|  \___/ \___/|_|
 
 
-Version 0-dev ffa2656fb3b69cc32ae3fd61a7dffd88c78efac3
-Built Fri Jul 14 20:37:43 2023
+Version 0-dev 6710d3d7f18cc5086cbc76e1a819eca17018b6c6
+Built Sat Jul 15 19:49:53 2023
 
 card#0
   id: "hw:tegrahda"
@@ -883,128 +883,154 @@ card#3
       id: "hw:U192k,0"
         1 duplex subdevice(s)
 =========================================================================
- N SUBSYSTEM DEVPATH
+ N  SUBSYSTEM DEVPATH
 -------------------------------------------------------------------------
- 1  platform /70030000.hda
-             [SOUND] card0
+ 1   platform /platform/serial8250
+              [TTY] ttyS2
+              [TTY] ttyS3
+              [TTY] ttyS1
 -------------------------------------------------------------------------
- 2       usb /70090000.xusb/usb1/1-2/1-2.4/1-2.4.4/1-2.4.4.4
-             [MNFCTR] FTDI
-             [PRODCT] FT232R USB UART
-             [SERIAL] AL029JTA
+ 2   platform /70006200.serial
+              [TTY] ttyTHS2
 -------------------------------------------------------------------------
- 3       usb /70090000.xusb/usb1/1-2/1-2.4/1-2.4.4/1-2.4.4.2
-             [MNFCTR] Prolific Technology Inc.
-             [PRODCT] USB-Serial Controller
+ 3   platform /70030000.hda
+              [SOUND] card0
 -------------------------------------------------------------------------
- 4       usb /70090000.xusb/usb1/1-2/1-2.4/1-2.4.4/1-2.4.4.3
-             [MNFCTR] Prolific Technology Inc.
-             [PRODCT] USB-Serial Controller
+ 4        mmc /sdhci-tegra.0/mmc_host/mmc0/mmc0:aaaa
+              [BLOCK] mmcblk0
 -------------------------------------------------------------------------
- 5       hid /70090000.xusb/usb1/1-2/1-2.4/1-2.4.4/1-2.4.4.1/1-2.4.4.1.1/1-2.4.4.1.1:1.1/0003:046D:C221.0003
-             [INPUT] input3
-             [EVENT] event3
+ 5   platform /70006000.serial
+              [TTY] ttyS0
 -------------------------------------------------------------------------
- 6       hid /70090000.xusb/usb1/1-2/1-2.4/1-2.4.4/1-2.4.4.1/1-2.4.4.1.1/1-2.4.4.1.1:1.0/0003:046D:C221.0002
-             [INPUT] input2
-             [EVENT] event2
+ 6 usb-serial /70090000.xusb/usb1/1-2/1-2.4/1-2.4.4/1-2.4.4.4/1-2.4.4.4:1.0/ttyUSB2
+              [TTY] ttyUSB2
 -------------------------------------------------------------------------
- 7       usb /70090000.xusb/usb1/1-2/1-2.4/1-2.4.4/1-2.4.4.1/1-2.4.4.1.1
-             [MNFCTR] Logitech
-             [PRODCT] Logitech Gaming Keyboard
+ 7        usb /70090000.xusb/usb1/1-2/1-2.4/1-2.4.4/1-2.4.4.4
+              [MNFCTR] FTDI
+              [PRODCT] FT232R USB UART
+              [SERIAL] AL029JTA
 -------------------------------------------------------------------------
- 8       hid /70090000.xusb/usb1/1-2/1-2.4/1-2.4.4/1-2.4.4.1/1-2.4.4.1.4/1-2.4.4.1.4:1.0/0003:046D:C222.0005
-             [INPUT] input5
-             [EVENT] event5
+ 8 usb-serial /70090000.xusb/usb1/1-2/1-2.4/1-2.4.4/1-2.4.4.2/1-2.4.4.2:1.0/ttyUSB0
+              [TTY] ttyUSB0
 -------------------------------------------------------------------------
- 9       usb /70090000.xusb/usb1/1-2/1-2.4/1-2.4.4/1-2.4.4.1/1-2.4.4.1.4
-             [MNFCTR] G15 Keyboard
-             [PRODCT] G15 Keyboard
+ 9        usb /70090000.xusb/usb1/1-2/1-2.4/1-2.4.4/1-2.4.4.2
+              [MNFCTR] Prolific Technology Inc.
+              [PRODCT] USB-Serial Controller
 -------------------------------------------------------------------------
-10       hid /70090000.xusb/usb1/1-2/1-2.4/1-2.4.4/1-2.4.4.1/1-2.4.4.1.2/1-2.4.4.1.2:1.0/0003:045E:001E.0004
-             [INPUT] input4
-             [EVENT] event4
+10 usb-serial /70090000.xusb/usb1/1-2/1-2.4/1-2.4.4/1-2.4.4.3/1-2.4.4.3:1.0/ttyUSB1
+              [TTY] ttyUSB1
 -------------------------------------------------------------------------
-11       usb /70090000.xusb/usb1/1-2/1-2.4/1-2.4.4/1-2.4.4.1/1-2.4.4.1.2
-             [MNFCTR] Microsoft
-             [PRODCT] Microsoft IntelliMouse® Explorer
+11        usb /70090000.xusb/usb1/1-2/1-2.4/1-2.4.4/1-2.4.4.3
+              [MNFCTR] Prolific Technology Inc.
+              [PRODCT] USB-Serial Controller
 -------------------------------------------------------------------------
-12       usb /70090000.xusb/usb1/1-2/1-2.4/1-2.4.4/1-2.4.4.1
-             [MNFCTR] Logitech
-             [PRODCT] Logitech G15 Keyboard
+12        hid /70090000.xusb/usb1/1-2/1-2.4/1-2.4.4/1-2.4.4.1/1-2.4.4.1.1/1-2.4.4.1.1:1.1/0003:046D:C221.0003
+              [INPUT] input3
+              [EVENT] event3
 -------------------------------------------------------------------------
-13       usb /70090000.xusb/usb1/1-2/1-2.4/1-2.4.4
-             [MNFCTR] GenesysLogic
-             [PRODCT] USB2.0 Hub
+13        hid /70090000.xusb/usb1/1-2/1-2.4/1-2.4.4/1-2.4.4.1/1-2.4.4.1.1/1-2.4.4.1.1:1.0/0003:046D:C221.0002
+              [INPUT] input2
+              [EVENT] event2
 -------------------------------------------------------------------------
-14       usb /70090000.xusb/usb1/1-2/1-2.4/1-2.4.2/1-2.4.2:1.0
-             [SOUND] card2
+14        usb /70090000.xusb/usb1/1-2/1-2.4/1-2.4.4/1-2.4.4.1/1-2.4.4.1.1
+              [MNFCTR] Logitech
+              [PRODCT] Logitech Gaming Keyboard
 -------------------------------------------------------------------------
-15       hid /70090000.xusb/usb1/1-2/1-2.4/1-2.4.2/1-2.4.2:1.4/0003:1043:857C.0001
-             [INPUT] input1
-             [EVENT] event1
+15        hid /70090000.xusb/usb1/1-2/1-2.4/1-2.4.4/1-2.4.4.1/1-2.4.4.1.4/1-2.4.4.1.4:1.0/0003:046D:C222.0005
+              [INPUT] input5
+              [EVENT] event5
 -------------------------------------------------------------------------
-16       usb /70090000.xusb/usb1/1-2/1-2.4/1-2.4.2
-             [MNFCTR] ASUS
-             [PRODCT] Xonar U7
+16        usb /70090000.xusb/usb1/1-2/1-2.4/1-2.4.4/1-2.4.4.1/1-2.4.4.1.4
+              [MNFCTR] G15 Keyboard
+              [PRODCT] G15 Keyboard
 -------------------------------------------------------------------------
-17       usb /70090000.xusb/usb1/1-2/1-2.4/1-2.4.3/1-2.4.3:1.0
-             [SOUND] card3
+17        hid /70090000.xusb/usb1/1-2/1-2.4/1-2.4.4/1-2.4.4.1/1-2.4.4.1.2/1-2.4.4.1.2:1.0/0003:045E:001E.0004
+              [INPUT] input4
+              [EVENT] event4
 -------------------------------------------------------------------------
-18       usb /70090000.xusb/usb1/1-2/1-2.4/1-2.4.3
-             [MNFCTR] BEHRINGER
-             [PRODCT] UMC404HD 192k
+18        usb /70090000.xusb/usb1/1-2/1-2.4/1-2.4.4/1-2.4.4.1/1-2.4.4.1.2
+              [MNFCTR] Microsoft
+              [PRODCT] Microsoft IntelliMouse® Explorer
 -------------------------------------------------------------------------
-19       usb /70090000.xusb/usb1/1-2/1-2.4
-             [MNFCTR] GenesysLogic
-             [PRODCT] USB2.0 Hub
+19        usb /70090000.xusb/usb1/1-2/1-2.4/1-2.4.4/1-2.4.4.1
+              [MNFCTR] Logitech
+              [PRODCT] Logitech G15 Keyboard
 -------------------------------------------------------------------------
-20       usb /70090000.xusb/usb1/1-2
-             [MNFCTR] Generic
-             [PRODCT] 4-Port USB 2.1 Hub
+20        usb /70090000.xusb/usb1/1-2/1-2.4/1-2.4.4
+              [MNFCTR] GenesysLogic
+              [PRODCT] USB2.0 Hub
 -------------------------------------------------------------------------
-21       usb /70090000.xusb/usb1
-             [MNFCTR] Linux 4.9.299-5305-27261-geebda4d2b455 xhci-hcd
-             [PRODCT] xHCI Host Controller
-             [SERIAL] 70090000.xusb
+21        usb /70090000.xusb/usb1/1-2/1-2.4/1-2.4.2/1-2.4.2:1.0
+              [SOUND] card2
 -------------------------------------------------------------------------
-22      scsi /70090000.xusb/usb2/2-1/2-1.3/2-1.3:1.0/host2/target2:0:0/2:0:0:0
-             [VENDOR] TO Exter
-             [MODEL] nal USB 3.0
-             [WWID] naa.3020150331000760
-             [BLOCK] sdc
+22        hid /70090000.xusb/usb1/1-2/1-2.4/1-2.4.2/1-2.4.2:1.4/0003:1043:857C.0001
+              [INPUT] input1
+              [EVENT] event1
 -------------------------------------------------------------------------
-23       usb /70090000.xusb/usb2/2-1/2-1.3
-             [MNFCTR] TOSHIBA
-             [PRODCT] External USB 3.0
-             [SERIAL] 201503310007F
+23        usb /70090000.xusb/usb1/1-2/1-2.4/1-2.4.2
+              [MNFCTR] ASUS
+              [PRODCT] Xonar U7
 -------------------------------------------------------------------------
-24      scsi /70090000.xusb/usb2/2-1/2-1.1/2-1.1:1.0/host0/target0:0:0/0:0:0:0
-             [VENDOR] TO Exter
-             [MODEL] nal USB 3.0
-             [WWID] naa.3020150331000760
-             [BLOCK] sda
+24        usb /70090000.xusb/usb1/1-2/1-2.4/1-2.4.3/1-2.4.3:1.0
+              [SOUND] card3
 -------------------------------------------------------------------------
-25       usb /70090000.xusb/usb2/2-1/2-1.1
-             [MNFCTR] TOSHIBA
-             [PRODCT] External USB 3.0
-             [SERIAL] 201503310007F
+25        usb /70090000.xusb/usb1/1-2/1-2.4/1-2.4.3
+              [MNFCTR] BEHRINGER
+              [PRODCT] UMC404HD 192k
 -------------------------------------------------------------------------
-26       usb /70090000.xusb/usb2/2-1/2-1.4
-             [MNFCTR] GenesysLogic
-             [PRODCT] USB3.0 Hub
+26        usb /70090000.xusb/usb1/1-2/1-2.4
+              [MNFCTR] GenesysLogic
+              [PRODCT] USB2.0 Hub
 -------------------------------------------------------------------------
-27       usb /70090000.xusb/usb2/2-1
-             [MNFCTR] Generic
-             [PRODCT] 4-Port USB 3.1 Hub
+27        usb /70090000.xusb/usb1/1-2
+              [MNFCTR] Generic
+              [PRODCT] 4-Port USB 2.1 Hub
 -------------------------------------------------------------------------
-28       usb /70090000.xusb/usb2
-             [MNFCTR] Linux 4.9.299-5305-27261-geebda4d2b455 xhci-hcd
-             [PRODCT] xHCI Host Controller
-             [SERIAL] 70090000.xusb
+28        usb /70090000.xusb/usb1
+              [MNFCTR] Linux 4.9.299-5305-27261-geebda4d2b455 xhci-hcd
+              [PRODCT] xHCI Host Controller
+              [SERIAL] 70090000.xusb
 -------------------------------------------------------------------------
-29  platform /sound
-             [SOUND] card1
+29       scsi /70090000.xusb/usb2/2-1/2-1.3/2-1.3:1.0/host1/target1:0:0/1:0:0:0
+              [VENDOR] TO Exter
+              [MODEL] nal USB 3.0
+              [WWID] naa.3020150331000760
+              [BLOCK] sdb
+-------------------------------------------------------------------------
+30        usb /70090000.xusb/usb2/2-1/2-1.3
+              [MNFCTR] TOSHIBA
+              [PRODCT] External USB 3.0
+              [SERIAL] 201503310007F
+-------------------------------------------------------------------------
+31       scsi /70090000.xusb/usb2/2-1/2-1.1/2-1.1:1.0/host0/target0:0:0/0:0:0:0
+              [VENDOR] TO Exter
+              [MODEL] nal USB 3.0
+              [WWID] naa.3020150331000760
+              [BLOCK] sda
+-------------------------------------------------------------------------
+32        usb /70090000.xusb/usb2/2-1/2-1.1
+              [MNFCTR] TOSHIBA
+              [PRODCT] External USB 3.0
+              [SERIAL] 201503310007F
+-------------------------------------------------------------------------
+33        usb /70090000.xusb/usb2/2-1/2-1.4
+              [MNFCTR] GenesysLogic
+              [PRODCT] USB3.0 Hub
+-------------------------------------------------------------------------
+34        usb /70090000.xusb/usb2/2-1
+              [MNFCTR] Generic
+              [PRODCT] 4-Port USB 3.1 Hub
+-------------------------------------------------------------------------
+35        usb /70090000.xusb/usb2
+              [MNFCTR] Linux 4.9.299-5305-27261-geebda4d2b455 xhci-hcd
+              [PRODCT] xHCI Host Controller
+              [SERIAL] 70090000.xusb
+-------------------------------------------------------------------------
+36   platform /70006040.serial
+              [TTY] ttyTHS1
+-------------------------------------------------------------------------
+37   platform /sound
+              [SOUND] card1
 </pre>
 </div>
 <div class="paragraph"><p>Development happens in GIT:</p></div>
@@ -1042,7 +1068,7 @@ card#3
 <div id="footer">
 <div id="footer-text">
 Last updated
- 2023-07-15 15:12:57 EEST
+ 2023-07-15 19:50:48 EEST
 </div>
 </div>
 </body>
