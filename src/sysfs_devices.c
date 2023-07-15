@@ -115,11 +115,11 @@ catroof_sysfs_device_callback_print(
 {
   if (strcmp(devtype, "sound") == 0)
   {
-    printf("             [SOUND] %s\n", devid);
+    printf("              [SOUND] %s\n", devid);
   }
   else if (strcmp(devtype, "input") == 0)
   {
-    printf("             [INPUT] %s\n", devid);
+    printf("              [INPUT] %s\n", devid);
     char * input = catdup("input/", devid);
     if (input == NULL)
     {
