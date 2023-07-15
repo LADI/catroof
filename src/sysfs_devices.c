@@ -412,6 +412,6 @@ exit:
 bool catroof_scan_sysfs(void)
 {
   printf("=========================================================================\n");
-  printf(" N SUBSYSTEM DEVPATH\n");
+  printf(" N  SUBSYSTEM DEVPATH\n");
   return catroof_scan_sysfs_internal(SYSFS_ROOT);
 }
