@@ -69,6 +69,14 @@ catroof_alsa_enum_devices(
   catroof_enum_alsa_card_callback_fn cards_cb,
   catroof_enum_alsa_device_callback_fn devices_cb);
 
+typedef
+bool
+(* catroof_sysfs_device_callback_fn)(
+  void * ctx,
+  const char * devpath,
+  const char * devtype,
+  const char * devid);
+
 /**
  * Enumerate all devices
  */

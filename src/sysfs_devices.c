@@ -12,6 +12,7 @@
 
 #include "common.h"
 #include "file.h"
+#include <catroof/catroof.h>
 
 #define SYSFS_ROOT "/sys/devices"
 
@@ -20,6 +21,134 @@
  * the ALSA card nubering which is 0-based. */
 #define CATROOF_DEVICE_NO_START 1
 static unsigned long catroof_device_no = CATROOF_DEVICE_NO_START;
+
+static bool catroof_scan_sysfs_internal(const char * dirpath);
+
+static
+bool
+catroof_scan_sysfs_subdir(
+  void * ctx,
+  catroof_sysfs_device_callback_fn callback,
+  const char * devpath,
+  const char * devtype,
+  const char * devprefix)
+{
+  bool success;
+  size_t devprefix_len;
+  char * dirpath;
+  DIR * dir;
+  struct dirent * dentry_ptr;
+  char * entry_fullpath;
+  struct stat st;
+
+  success = false;
+
+  devprefix_len = devprefix != NULL ? strlen(devprefix) : 0;
+
+  dirpath = catdup4(SYSFS_ROOT, devpath, "/", devtype);
+  if (dirpath == NULL)
+  {
+    log_error("OOM when composing sysfs dirpath");
+    goto exit;
+  }
+
+  dir = opendir(dirpath);
+  if (dir == NULL)
+  {
+    log_error("Cannot open directory '%s': %d (%s)", dirpath, errno, strerror(errno));
+    goto free_dirpath;
+  }
+
+  while ((dentry_ptr = readdir(dir)) != NULL)
+  {
+    if (strcmp(dentry_ptr->d_name, ".") == 0 ||
+        strcmp(dentry_ptr->d_name, "..") == 0)
+    {
+      continue;
+    }
+
+    entry_fullpath = catdup3(dirpath, "/", dentry_ptr->d_name);
+    if (entry_fullpath == NULL)
+    {
+      log_error("catdup() failed");
+      goto close;
+    }
+
+    if (lstat(entry_fullpath, &st) != 0)
+    {
+      log_error("failed to stat '%s': %d (%s)", entry_fullpath, errno, strerror(errno));
+    }
+    else
+    {
+      if (S_ISDIR(st.st_mode) &&
+          (devprefix == NULL ||
+           strncmp(devprefix, dentry_ptr->d_name, devprefix_len) == 0))
+      {
+        if (!callback(ctx, devpath, devtype, dentry_ptr->d_name))
+        {
+          log_error("sysfs dir scan abort");
+          goto free_fullpath;
+        }
+      }
+    }
+  }
+
+  success = true;
+
+free_fullpath:
+  free(entry_fullpath);
+close:
+  closedir(dir);
+free_dirpath:
+  free(dirpath);
+exit:
+  return success;
+}
+
+static
+bool
+catroof_sysfs_device_callback_print(
+  void * ctx,
+  const char * devpath,
+  const char * devtype,
+  const char * devid)
+{
+  if (strcmp(devtype, "sound") == 0)
+  {
+    printf("             [SOUND] %s\n", devid);
+  }
+  else if (strcmp(devtype, "input") == 0)
+  {
+    printf("             [INPUT] %s\n", devid);
+    char * input = catdup("input/", devid);
+    if (input == NULL)
+    {
+      log_error("OOM when composing sysfs input event id");
+      return false;
+    }
+    catroof_scan_sysfs_subdir(
+      ctx,
+      catroof_sysfs_device_callback_print,
+      devpath,
+      input,
+      "event");
+    free(input);
+  }
+  else if (strncmp(devid, "event", 5) == 0)
+  {
+    printf("             [EVENT] %s\n", devid);
+  }
+  else if (strcmp(devtype, "block") == 0)
+  {
+    printf("             [BLOCK] %s\n", devid);
+  }
+  else
+  {
+    printf("             [???] devtype=\"%s\"\n", devid);
+    ASSERT_NO_PASS;
+  }
+  return true;
+}
 
 /* recurse sysfs */
 static bool catroof_scan_sysfs_internal(const char * dirpath)
@@ -32,9 +161,12 @@ static bool catroof_scan_sysfs_internal(const char * dirpath)
   bool has_subsystem;
   bool has_sound;
   bool has_input;
+  bool has_block;
   char * manufacturer;
   char * product;
   char * serial;
+  char * vendor;
+  char * model;
   char subsystem[1024];
   size_t len;
   const char * device_path;
@@ -52,8 +184,11 @@ static bool catroof_scan_sysfs_internal(const char * dirpath)
   has_subsystem = false;
   has_sound = false;
   has_input = false;
+  has_block = false;
   manufacturer = NULL;
   product = NULL;
+  vendor = NULL;
+  model = NULL;
   serial = NULL;
   wwid = NULL;
   while ((dentry_ptr = readdir(dir)) != NULL)
@@ -95,7 +230,11 @@ static bool catroof_scan_sysfs_internal(const char * dirpath)
       {
         has_sound = true;
       }
-      if (strcmp(dentry_ptr->d_name, "input") == 0)
+      if (S_ISDIR(st.st_mode) && strcmp(dentry_ptr->d_name, "block") == 0)
+      {
+        has_block = true;
+      }
+      if (S_ISDIR(st.st_mode) && strcmp(dentry_ptr->d_name, "input") == 0)
       {
         has_input = true;
       }
@@ -108,6 +247,16 @@ static bool catroof_scan_sysfs_internal(const char * dirpath)
       {
         if (product == NULL)
           product = read_file_contents(entry_fullpath);
+      }
+      if (strcmp(dentry_ptr->d_name, "vendor") == 0)
+      {
+        if (vendor == NULL)
+          vendor = read_file_contents(entry_fullpath);
+      }
+      if (strcmp(dentry_ptr->d_name, "model") == 0)
+      {
+        if (model == NULL)
+          model = read_file_contents(entry_fullpath);
       }
       if (strcmp(dentry_ptr->d_name, "serial") == 0)
       {
@@ -157,34 +306,67 @@ static bool catroof_scan_sysfs_internal(const char * dirpath)
       printf("             [PRODCT] %s\n", product);
       if (serial != NULL) printf("             [SERIAL] %s\n", serial);
     }
+    if (vendor != NULL && model != NULL)
+    {
+      printf("             [VENDOR] %s\n", vendor);
+      printf("             [MODEL] %s\n", model);
+    }
     if (wwid != NULL) printf("             [WWID] %s\n", wwid);
     if (has_sound)
     {
-      printf("             [SOUND] ALSA CARD NO:");
-      //char * cmd = catdupv("ls -la \"", SYSFS_ROOT, device_path, "/sound\"", NULL);
-      //system(cmd);
-      //free(cmd);
-      for (int cardno = 0; cardno < /* FIXME */ 9; cardno++)
+      if (!catroof_scan_sysfs_subdir(
+            NULL,
+            catroof_sysfs_device_callback_print,
+            device_path,
+            "sound",
+            "card"))
       {
-        char cardno_str[2];
-        cardno_str[0] = '0' + cardno;
-        cardno_str[1] = 0;
-        char * path = catdupv(SYSFS_ROOT, device_path, "/sound/card", cardno_str, NULL);
-        //printf("%s\n", path);
-        if (lstat(path, &st) == 0)
-        {
-          printf(" %s", cardno_str);
-        }
-        free(path);
+        catroof_sysfs_device_callback_print(
+          NULL,
+          device_path,
+          "sound",
+          "[ERROR]");
       }
-      printf("\n");
     }
-    if (has_input) printf("             [INPUT]\n");
+    if (has_block)
+    {
+      if (!catroof_scan_sysfs_subdir(
+            NULL,
+            catroof_sysfs_device_callback_print,
+            device_path,
+            "block",
+            NULL))
+      {
+        catroof_sysfs_device_callback_print(
+          NULL,
+          device_path,
+          "block",
+          "[ERROR]");
+      }
+    }
+    if (has_input)
+    {
+      if (!catroof_scan_sysfs_subdir(
+            NULL,
+            catroof_sysfs_device_callback_print,
+            device_path,
+            "input",
+            NULL))
+      {
+        catroof_sysfs_device_callback_print(
+          NULL,
+          device_path,
+          "input",
+          "[ERROR]");
+      }
+    }
     catroof_device_no++;
   }
 
   free(manufacturer);
   free(product);
+  free(vendor);
+  free(model);
   free(serial);
   free(wwid);
 
