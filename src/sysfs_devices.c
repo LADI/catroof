@@ -134,17 +134,21 @@ catroof_sysfs_device_callback_print(
       "event");
     free(input);
   }
+  else if (strcmp(devtype, "tty") == 0)
+  {
+    printf("              [TTY] %s\n", devid);
+  }
   else if (strncmp(devid, "event", 5) == 0)
   {
-    printf("             [EVENT] %s\n", devid);
+    printf("              [EVENT] %s\n", devid);
   }
   else if (strcmp(devtype, "block") == 0)
   {
-    printf("             [BLOCK] %s\n", devid);
+    printf("              [BLOCK] %s\n", devid);
   }
   else
   {
-    printf("             [???] devtype=\"%s\"\n", devid);
+    printf("              [???] devtype=\"%s\"\n", devid);
     ASSERT_NO_PASS;
   }
   return true;
@@ -162,6 +166,7 @@ static bool catroof_scan_sysfs_internal(const char * dirpath)
   bool has_sound;
   bool has_input;
   bool has_block;
+  bool has_tty;
   char * manufacturer;
   char * product;
   char * serial;
@@ -185,6 +190,7 @@ static bool catroof_scan_sysfs_internal(const char * dirpath)
   has_sound = false;
   has_input = false;
   has_block = false;
+  has_tty = false;
   manufacturer = NULL;
   product = NULL;
   vendor = NULL;
@@ -237,6 +243,10 @@ static bool catroof_scan_sysfs_internal(const char * dirpath)
       if (S_ISDIR(st.st_mode) && strcmp(dentry_ptr->d_name, "input") == 0)
       {
         has_input = true;
+      }
+      if (S_ISDIR(st.st_mode) && strcmp(dentry_ptr->d_name, "tty") == 0)
+      {
+        has_tty = true;
       }
       if (strcmp(dentry_ptr->d_name, "manufacturer") == 0)
       {
@@ -292,26 +302,27 @@ static bool catroof_scan_sysfs_internal(const char * dirpath)
   }
 
   if (has_subsystem &&
-      (has_sound || has_input ||
+      (has_sound || has_input || has_block || has_tty ||
        wwid != NULL ||
-       (manufacturer != NULL && product != NULL)))
+       (manufacturer != NULL && product != NULL) ||
+       (vendor != NULL && model != NULL)))
   {
     printf("-------------------------------------------------------------------------\n");
-    printf("% 2lu % 9s ", catroof_device_no, basename(subsystem));
+    printf("% 2lu % 10s ", catroof_device_no, basename(subsystem));
     printf("%s", device_path);
     printf("\n");
     if (manufacturer != NULL && product != NULL)
     {
-      printf("             [MNFCTR] %s\n", manufacturer);
-      printf("             [PRODCT] %s\n", product);
-      if (serial != NULL) printf("             [SERIAL] %s\n", serial);
+      printf("              [MNFCTR] %s\n", manufacturer);
+      printf("              [PRODCT] %s\n", product);
+      if (serial != NULL) printf("              [SERIAL] %s\n", serial);
     }
     if (vendor != NULL && model != NULL)
     {
-      printf("             [VENDOR] %s\n", vendor);
-      printf("             [MODEL] %s\n", model);
+      printf("              [VENDOR] %s\n", vendor);
+      printf("              [MODEL] %s\n", model);
     }
-    if (wwid != NULL) printf("             [WWID] %s\n", wwid);
+    if (wwid != NULL) printf("              [WWID] %s\n", wwid);
     if (has_sound)
     {
       if (!catroof_scan_sysfs_subdir(
@@ -357,6 +368,22 @@ static bool catroof_scan_sysfs_internal(const char * dirpath)
           NULL,
           device_path,
           "input",
+          "[ERROR]");
+      }
+    }
+    if (has_tty)
+    {
+      if (!catroof_scan_sysfs_subdir(
+            NULL,
+            catroof_sysfs_device_callback_print,
+            device_path,
+            "tty",
+            NULL))
+      {
+        catroof_sysfs_device_callback_print(
+          NULL,
+          device_path,
+          "tty",
           "[ERROR]");
       }
     }
