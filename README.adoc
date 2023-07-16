@@ -17,7 +17,7 @@
 
 .WORK IN PROGRESS
 [NOTE]
-This is Work In Progress.
+This is Work In Progress. Currently only lscatroof tool is usable.
 
 https://github.com/libratbag/libratbag[ratbagd]-like device manager for configuring settings of audio, midi and surface control devices.
 
