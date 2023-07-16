@@ -757,17 +757,17 @@ zKjX661DvHOOJElIkoRSqYT3/vLvRlW15eHCa4VxzdvmpjZDfubzuXeb3vuzqCEixBhbo0NTkyS5
 PAr9L8j/96+U/w3yCoCXW14B8HLLvwDd67nwZIEPdgAAAABJRU5ErkJggg==">
 </td>
 <td class="content">
-<div class="title">WORK IN PROGRESS</div>This is Work In Progress.</td>
+<div class="title">WORK IN PROGRESS</div>This is Work In Progress. Currently only lscatroof tool is usable.</td>
 </tr></table>
 </div>
-<div class="paragraph"><p><a href="https://github.com/libratbag/libratbag">ratbagd</a>-like device manager for configuring settings of audio, midi and surface control devices.</p></div>
-<div class="paragraph"><p>This project aims to provide:</p></div>
+<div class="paragraph"><p><em>catroof</em> is device manager software for operating systems running <a href="https://kernel.org/">Linux</a> kernel with ALSA (PCM and RAWMIDI) enabled.</p></div>
+<div class="paragraph"><p>For those familiar with <a href="https://github.com/libratbag/libratbag">ratbagd</a>, it is a similar device manager software. Instead of limiting the scope of devices to input devices, <em>catroof</em> aims at configuring settings of audio, midi and surface control devices, a task that includes managing some linux input devices. <em>catroofd</em> is designed to be run on user session bus, and not as root. Instead, standard UNIX permission mechanisms ensure that processes running as non-priviledged user have access to the device objects (via standard udev hooks that adjust group membership, or ACL, for the appearing device nodes).</p></div>
+<div class="paragraph"><p>Project goals:</p></div>
 <div class="ulist"><ul>
 <li>
 <p>
-device manager D-Bus service that implements
-   device enumeration, configuration and profile
-   management.
+device manager D-Bus service (catroofd) that implements device enumeration,
+   configuration and profile (UCM2 and more) management.
 </p>
 </li>
 <li>
@@ -1046,6 +1046,8 @@ card#3
 </p>
 </li>
 </ul></div>
+<div class="paragraph"><p>For instructions on building, installation and packaging catroof,
+see the doc/INSTALL.adoc file.</p></div>
 <div class="paragraph"><p>See also:</p></div>
 <div class="ulist"><ul>
 <li>
@@ -1068,7 +1070,7 @@ card#3
 <div id="footer">
 <div id="footer-text">
 Last updated
- 2023-07-15 19:50:48 EEST
+ 2023-07-16 20:13:22 EEST
 </div>
 </div>
 </body>
