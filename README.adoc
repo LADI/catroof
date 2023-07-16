@@ -272,6 +272,9 @@ Development happens in GIT:
  * https://gitea.ladish.org/LADI/catroof[catroof repo at LADI project Gitea]
  * https://github.com/LADI/catroof[catroof repo of LADI project at GitHub]
 
+For instructions on building, installation and packaging catroof,
+see the doc/INSTALL.adoc file.
+
 See also:
 
  * https://jackdbus.ladish.org/[jackdbus]
