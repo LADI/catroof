@@ -11,6 +11,7 @@ libdbus and libcdbus are optional, but without them only lscatroof is usable.
 
 == Runtime dependencies
 
+ * https://www.lua.org/[Lua language interpreter] (for the interactive GUIs). Versions 5.3 and 5.4 are known to work.
  * https://gitlab.gnome.org/GNOME/gobject-introspection[GObject-Introspection] (for the GTK+ GUI)
  * https://github.com/lgi-devs/lgi[lgi - Dynamic Lua binding to GObject libraries using GObject-Introspection] (for the GTK+ GUI)
  * https://pagure.io/newt[Newt] (for the ncurses GUI)
