@@ -2,6 +2,7 @@
 
 == Build dependencies
 
+ * C compiler toolchain that supports -std=gnu99 (gcc, clang or else)
  * http://www.alsa-project.org/[ALSA library]
  * https://www.python.org/[python2 or python3] (for using waf build system)
  * https://dbus.freedesktop.org[D-Bus library (libdbus)] (optional)
