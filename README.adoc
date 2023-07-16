@@ -19,13 +19,14 @@
 [NOTE]
 This is Work In Progress. Currently only lscatroof tool is usable.
 
-https://github.com/libratbag/libratbag[ratbagd]-like device manager for configuring settings of audio, midi and surface control devices.
+'catroof' is device manager software for operating systems running https://kernel.org/[Linux] kernel with ALSA (PCM and RAWMIDI) enabled.
 
-This project aims to provide:
+For those familiar with https://github.com/libratbag/libratbag[ratbagd], it is a similar device manager software. Instead of limiting the scope of devices to input devices, 'catroof' aims at configuring settings of audio, midi and surface control devices, a task that includes managing some linux input devices. 'catroofd' is designed to be run on user session bus, and not as root. Instead, standard UNIX permission mechanisms ensure that processes running as non-priviledged user have access to the device objects (via standard udev hooks that adjust group membership, or ACL, for the appearing device nodes).
 
- * device manager D-Bus service that implements
-   device enumeration, configuration and profile
-   management.
+Project goals:
+
+ * device manager D-Bus service (catroofd) that implements device enumeration,
+   configuration and profile (UCM2 and more) management.
  * User interface frontends, including but not limited to:
  ** GTK3 frotnend via GNOME introspection (gcatroof)
     See https://github.com/libratbag/piper[piper] for the libratbag equivalent.
