@@ -5,7 +5,7 @@
 
 #define LOG_OUTPUT_STDOUT
 
-//#include "config.h"
+#include "config.h"
 #include "common.h"
 
 #include <errno.h>
@@ -18,6 +18,15 @@
 #define DEFAULT_XDG_LOG "/.log"
 #define CATROOF_XDG_SUBDIR "/" BASE_NAME
 #define CATROOF_XDG_LOG "/" BASE_NAME ".log"
+
+#if !HAVE_CDBUS_1
+cdbus_log_function cdbus_log;
+
+void cdbus_log_setup(cdbus_log_function logfn)
+{
+  cdbus_log = logfn;
+}
+#endif
 
 #if !defined(LOG_OUTPUT_STDOUT)
 static ino_t g_log_file_ino;

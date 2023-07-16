@@ -8,6 +8,8 @@
 #ifndef LOG_H__70B2BC62_C528_43F7_BC0B_B1D7D3C2F5CB__INCLUDED
 #define LOG_H__70B2BC62_C528_43F7_BC0B_B1D7D3C2F5CB__INCLUDED
 
+#include "config.h"
+
 #define ANSI_BOLD_ON    "\033[1m"
 #define ANSI_BOLD_OFF   "\033[22m"
 #define ANSI_COLOR_RED  "\033[31m"
@@ -15,9 +17,36 @@
 #define ANSI_RESET      "\033[0m"
 
 #include <stdio.h>
-#include <cdbus/log.h>
 
-#include "config.h"
+#if HAVE_CDBUS_1
+#include <cdbus/log.h>
+#else
+
+#ifdef __cplusplus
+extern "C"
+#endif
+typedef
+void
+(* cdbus_log_function)(
+  unsigned int level,
+  const char * file,
+  unsigned int line,
+  const char * func,
+  const char * format,
+  ...)
+#if defined (__GNUC__)
+  __attribute__((format(printf, 5, 6)))
+#endif
+  ;
+
+extern cdbus_log_function cdbus_log;
+
+#define CDBUS_LOG_LEVEL_DEBUG        0
+#define CDBUS_LOG_LEVEL_INFO         1
+#define CDBUS_LOG_LEVEL_WARN         2
+#define CDBUS_LOG_LEVEL_ERROR        3
+#define CDBUS_LOG_LEVEL_ERROR_PLAIN  4
+#endif
 
 /* fallback for old gcc versions,
    http://gcc.gnu.org/onlinedocs/gcc/Function-Names.html */

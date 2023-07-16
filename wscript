@@ -51,11 +51,22 @@ def git_ver(self):
     fi.close()
 
 def display_msg(conf, msg="", status = None, color = None):
-    if status:
-        #Logs.pprint(msg, status, color)
-        conf.msg(msg, status, color=color)
-    else:
+    if status is None:
         Logs.pprint('NORMAL', msg)
+        return
+    if isinstance(status,bool):
+        if status:
+            status = "yes"
+            if not color:
+                color = 'GREEN'
+        else:
+            status = "no"
+            if not color:
+                color = 'YELLOW'
+    elif not isinstance(status,str):
+        status = repr(status)
+    conf.msg(msg, status, color=color)
+    #Logs.pprint(msg, status, color)
 
 def display_raw_text(conf, text, color = 'NORMAL'):
     Logs.pprint(color, text, sep = '')
@@ -67,6 +78,23 @@ def options(opt):
     # options provided by the modules
     opt.load('compiler_c')
     opt.load('wafautooptions')
+
+    build_catroof_opt = opt.add_auto_option(
+        'catroof',
+        help='Enable catroof',
+        conf_dest='BUILD_CATROOF',
+        style="yesno_and_hack",
+    )
+    build_catroof_opt.check_cfg(
+        package = 'dbus-1',
+        atleast_version = '1.0.0',
+        errmsg = "not installed, see http://dbus.freedesktop.org/",
+        args = '--cflags --libs')
+    build_catroof_opt.check_cfg(
+        package = 'cdbus-1',
+        atleast_version = '1.0.0',
+        errmsg = "not installed, see https://github.com/LADI/cdbus",
+        args = '--cflags --libs')
 
     opt.add_auto_option(
         'devmode',
@@ -98,38 +126,25 @@ def configure(conf):
         errmsg = "not installed, see http://www.alsa-project.org/",
         args = '--cflags --libs')
 
-    conf.check_cfg(
-        package = 'dbus-1',
-        atleast_version = '1.0.0',
-        mandatory = True,
-        errmsg = "not installed, see http://dbus.freedesktop.org/",
-        args = '--cflags --libs')
+    if conf.env["BUILD_CATROOF"]:
+        dbus_dir = conf.check_cfg(
+            package='dbus-1',
+            args='--variable=session_bus_services_dir',
+            msg="Retrieving D-Bus services dir")
+        if not dbus_dir:
+            return
 
-    dbus_dir = conf.check_cfg(
-        package='dbus-1',
-        args='--variable=session_bus_services_dir',
-        msg="Retrieving D-Bus services dir")
-    if not dbus_dir:
-        return
+        dbus_dir = dbus_dir.strip()
+        conf.env['DBUS_SERVICES_DIR_REAL'] = dbus_dir
 
-    dbus_dir = dbus_dir.strip()
-    conf.env['DBUS_SERVICES_DIR_REAL'] = dbus_dir
-
-    if Options.options.enable_pkg_config_dbus_service_dir:
-        conf.env['DBUS_SERVICES_DIR'] = dbus_dir
-    else:
-        conf.env['DBUS_SERVICES_DIR'] = os.path.join(
-            os.path.normpath(conf.env['PREFIX']),
-            'share',
-            'dbus-1',
-            'services')
-
-    conf.check_cfg(
-        package = 'cdbus-1',
-        atleast_version = '1.0.0',
-        mandatory = True,
-        errmsg = "not installed, see https://github.com/LADI/cdbus",
-        args = '--cflags --libs')
+        if Options.options.enable_pkg_config_dbus_service_dir:
+            conf.env['DBUS_SERVICES_DIR'] = dbus_dir
+        else:
+            conf.env['DBUS_SERVICES_DIR'] = os.path.join(
+                os.path.normpath(conf.env['PREFIX']),
+                'share',
+                'dbus-1',
+                'services')
 
     if Options.options.mandir:
         conf.env['MANDIR'] = Options.options.mandir
@@ -188,18 +203,25 @@ def configure(conf):
 
     display_msg(conf, "Install prefix", conf.env['PREFIX'], 'CYAN')
     display_msg(conf, "Compiler", conf.env['CC'][0], 'CYAN')
+    display_msg(conf, "Enable lscatroof", True)
+    #display_msg(conf, "Enable libcatroof", conf.env["BUILD_CATROOF"])
+    #display_msg(conf, "Enable catroof", conf.env["BUILD_CATROOF"])
+    #display_msg(conf, "Enable gcatroof", conf.env["BUILD_CATROOF"])
+    #display_msg(conf, "Enable ncatroof", conf.env["BUILD_CATROOF"])
+    #display_msg(conf, "Enable catroofd", conf.env["BUILD_CATROOF"])
     conf.summarize_auto_options()
-    if conf.env['DBUS_SERVICES_DIR'] != conf.env['DBUS_SERVICES_DIR_REAL']:
-        display_msg(conf)
-        display_line(conf,     "WARNING: D-Bus session services directory as reported by pkg-config is", 'RED')
-        display_raw_text(conf, "WARNING:", 'RED')
-        display_line(conf,      conf.env['DBUS_SERVICES_DIR_REAL'], 'CYAN')
-        display_line(conf,     'WARNING: but service file will be installed in', 'RED')
-        display_raw_text(conf, "WARNING:", 'RED')
-        display_line(conf,      conf.env['DBUS_SERVICES_DIR'], 'CYAN')
-        display_line(conf,     'WARNING: You may need to adjust your D-Bus configuration after installing catroof', 'RED')
-        display_line(conf,     'WARNING: You can override dbus service install directory', 'RED')
-        display_line(conf,     'WARNING: with --enable-pkg-config-dbus-service-dir option to this script', 'RED')
+    if conf.env['HAVE_DBUS_1']:
+        if conf.env['DBUS_SERVICES_DIR'] != conf.env['DBUS_SERVICES_DIR_REAL']:
+            display_msg(conf)
+            display_line(conf,     "WARNING: D-Bus session services directory as reported by pkg-config is", 'RED')
+            display_raw_text(conf, "WARNING:", 'RED')
+            display_line(conf,      conf.env['DBUS_SERVICES_DIR_REAL'], 'CYAN')
+            display_line(conf,     'WARNING: but service file will be installed in', 'RED')
+            display_raw_text(conf, "WARNING:", 'RED')
+            display_line(conf,      conf.env['DBUS_SERVICES_DIR'], 'CYAN')
+            display_line(conf,     'WARNING: You may need to adjust your D-Bus configuration after installing catroof', 'RED')
+            display_line(conf,     'WARNING: You can override dbus service install directory', 'RED')
+            display_line(conf,     'WARNING: with --enable-pkg-config-dbus-service-dir option to this script', 'RED')
     flags.print()
     print()
 
@@ -218,18 +240,6 @@ def build(bld):
     # config.h, gitverson.h include path; public headers include path
     includes = [bld.path.get_bld(), "../include"]
 
-    shlib = bld(features=['c', 'cshlib'])
-    shlib.includes = includes
-    shlib.target = 'catroof'
-    shlib.env.cshlib_PATTERN = '%s.so'
-    shlib.install_path = bld.env['LUA_INSTALL_CMOD']
-    shlib.uselib = ['ALSA', 'LUA', 'CDBUS-1']
-    shlib.source = [
-        'src/alsa.c',
-        'src/catdup.c',
-        'src/log.c',
-        ]
-
     prog = bld(features=['c', 'cprogram'])
     prog.source = [
         'src/alsa.c',
@@ -244,10 +254,23 @@ def build(bld):
     prog.use = ['ALSA', 'CDBUS-1']
     prog.defines = ["HAVE_CONFIG_H"]
 
-    bld.install_as(bin_dir + "/" + "catroof", 'src/catroof.lua', chmod=Utils.O755)
-    bld.symlink_as(bin_dir + "/" + "ncatroof", 'catroof')
-    bld.symlink_as(bin_dir + "/" + "gcatroof", 'catroof')
-    bld.install_as(share_dir + "/" + "catroof.ui", 'src/catroof.ui')
+    if bld.env["BUILD_CATROOF"]:
+        shlib = bld(features=['c', 'cshlib'])
+        shlib.includes = includes
+        shlib.target = 'catroof'
+        shlib.env.cshlib_PATTERN = '%s.so'
+        shlib.install_path = bld.env['LUA_INSTALL_CMOD']
+        shlib.uselib = ['ALSA', 'LUA', 'CDBUS-1']
+        shlib.source = [
+            'src/alsa.c',
+            'src/catdup.c',
+            'src/log.c',
+        ]
+
+        bld.install_as(bin_dir + "/" + "catroof", 'src/catroof.lua', chmod=Utils.O755)
+        bld.symlink_as(bin_dir + "/" + "ncatroof", 'catroof')
+        bld.symlink_as(bin_dir + "/" + "gcatroof", 'catroof')
+        bld.install_as(share_dir + "/" + "catroof.ui", 'src/catroof.ui')
 
     # prog = bld(features=['c', 'cprogram'])
     # prog.source = [
