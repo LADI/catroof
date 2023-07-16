@@ -5,7 +5,7 @@
  * http://www.alsa-project.org/[ALSA library]
  * https://www.python.org/[python2 or python3] (for using waf build system)
  * https://dbus.freedesktop.org[D-Bus library (libdbus)] (optional)
- * https://github.com/LADI/cdbus[cdbus library]
+ * https://github.com/LADI/cdbus[cdbus library] (optional)
 
 libdbus and libcdbus are optional, but without them only lscatroof is usable.
 
