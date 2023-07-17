@@ -172,6 +172,8 @@ static bool catroof_scan_sysfs_internal(const char * dirpath)
   char * serial;
   char * vendor;
   char * model;
+  char * usbidVendor;
+  char * usbidProduct;
   char subsystem[1024];
   size_t len;
   const char * device_path;
@@ -195,6 +197,8 @@ static bool catroof_scan_sysfs_internal(const char * dirpath)
   product = NULL;
   vendor = NULL;
   model = NULL;
+  usbidVendor = NULL;
+  usbidProduct = NULL;
   serial = NULL;
   wwid = NULL;
   while ((dentry_ptr = readdir(dir)) != NULL)
@@ -268,6 +272,16 @@ static bool catroof_scan_sysfs_internal(const char * dirpath)
         if (model == NULL)
           model = read_file_contents(entry_fullpath);
       }
+      if (strcmp(dentry_ptr->d_name, "idVendor") == 0)
+      {
+        if (usbidVendor == NULL)
+          usbidVendor = read_file_contents(entry_fullpath);
+      }
+      if (strcmp(dentry_ptr->d_name, "idProduct") == 0)
+      {
+        if (usbidProduct == NULL)
+          usbidProduct = read_file_contents(entry_fullpath);
+      }
       if (strcmp(dentry_ptr->d_name, "serial") == 0)
       {
         if (serial == NULL)
@@ -321,6 +335,10 @@ static bool catroof_scan_sysfs_internal(const char * dirpath)
     {
       printf("              [VENDOR] %s\n", vendor);
       printf("              [MODEL] %s\n", model);
+    }
+    if (usbidVendor != NULL && usbidProduct != NULL)
+    {
+      printf("              [USB VID:PID] %s:%s\n", usbidVendor, usbidProduct);
     }
     if (wwid != NULL) printf("              [WWID] %s\n", wwid);
     if (has_sound)
@@ -390,6 +408,8 @@ static bool catroof_scan_sysfs_internal(const char * dirpath)
     catroof_device_no++;
   }
 
+  free(usbidVendor);
+  free(usbidProduct);
   free(manufacturer);
   free(product);
   free(vendor);
