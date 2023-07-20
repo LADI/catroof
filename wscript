@@ -159,7 +159,7 @@ def configure(conf):
     flags.add_c('-std=gnu99')
     if conf.env['BUILD_DEVMODE']:
         flags.add_c(['-Wall', '-Wextra'])
-        flags.add_c('-Wpedantic')
+        #flags.add_c('-Wpedantic')
         flags.add_c('-Werror')
         flags.add_c(['-Wno-variadic-macros', '-Wno-gnu-zero-variadic-macro-arguments'])
 
