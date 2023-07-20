@@ -322,7 +322,7 @@ static bool catroof_scan_sysfs_internal(const char * dirpath)
        (vendor != NULL && model != NULL)))
   {
     printf("-------------------------------------------------------------------------\n");
-    printf("% 2lu % 10s ", catroof_device_no, basename(subsystem));
+    printf("%2lu %10s ", catroof_device_no, basename(subsystem));
     printf("%s", device_path);
     printf("\n");
     if (manufacturer != NULL && product != NULL)
