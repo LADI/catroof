@@ -50,8 +50,8 @@ catroof_enum_alsa_device_cb(
   unsigned int device_type,
   int device_no,
   const char * device_id_str,
-  unsigned int capture_subdevices,
-  unsigned int playback_subdevices)
+  unsigned int playback_subdevices,
+  unsigned int capture_subdevices)
 {
   switch (device_type)
   {
