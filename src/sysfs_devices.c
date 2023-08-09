@@ -178,6 +178,7 @@ static bool catroof_scan_sysfs_internal(const char * dirpath)
   size_t len;
   const char * device_path;
   char * wwid;
+  char * speed;
 
   success = false;
 
@@ -201,6 +202,7 @@ static bool catroof_scan_sysfs_internal(const char * dirpath)
   usbidProduct = NULL;
   serial = NULL;
   wwid = NULL;
+  speed = NULL;
   while ((dentry_ptr = readdir(dir)) != NULL)
   {
     if (strcmp(dentry_ptr->d_name, ".") == 0 ||
@@ -291,6 +293,10 @@ static bool catroof_scan_sysfs_internal(const char * dirpath)
       {
         wwid = read_file_contents(entry_fullpath);
       }
+      if (strcmp(dentry_ptr->d_name, "speed") == 0)
+      {
+        speed = read_file_contents(entry_fullpath);
+      }
       if (S_ISDIR(st.st_mode))
       {
         if (!catroof_scan_sysfs_internal(entry_fullpath))
@@ -341,6 +347,7 @@ static bool catroof_scan_sysfs_internal(const char * dirpath)
       printf("              [USB VID:PID] %s:%s\n", usbidVendor, usbidProduct);
     }
     if (wwid != NULL) printf("              [WWID] %s\n", wwid);
+    if (speed != NULL) printf("              [SPEED] %s (Mbit)\n", speed);
     if (has_sound)
     {
       if (!catroof_scan_sysfs_subdir(
@@ -416,6 +423,7 @@ static bool catroof_scan_sysfs_internal(const char * dirpath)
   free(model);
   free(serial);
   free(wwid);
+  free(speed);
 
   success = true;
 
