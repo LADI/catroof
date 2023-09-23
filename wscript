@@ -222,7 +222,7 @@ def configure(conf):
             display_line(conf,     'WARNING: You may need to adjust your D-Bus configuration after installing catroof', 'RED')
             display_line(conf,     'WARNING: You can override dbus service install directory', 'RED')
             display_line(conf,     'WARNING: with --enable-pkg-config-dbus-service-dir option to this script', 'RED')
-    flags.print()
+    flags.display()
     print()
 
 def build(bld):
