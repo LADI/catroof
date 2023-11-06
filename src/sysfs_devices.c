@@ -91,9 +91,12 @@ catroof_scan_sysfs_subdir(
         }
       }
     }
+
+    free(entry_fullpath);
   }
 
   success = true;
+  goto close;
 
 free_fullpath:
   free(entry_fullpath);
