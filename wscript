@@ -227,7 +227,8 @@ def configure(conf):
 
 def build(bld):
     bin_dir = bld.env['BINDIR']
-    share_dir = bld.options.destdir + bld.env['PREFIX'] + '/share/' + APPNAME
+    # bld.options.destdir +
+    share_dir = bld.env['PREFIX'] + '/share/' + APPNAME
     #print(bin_dir)
     #print(share_dir)
 
