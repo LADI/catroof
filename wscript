@@ -110,7 +110,7 @@ def options(opt):
         default=False,
     )
 
-    opt.add_option('--mandir', type='string', help="Manpage directory [Default: <prefix>/share/man]")
+    opt.add_option('--mandir', type=str, help="Manpage directory [Default: <prefix>/share/man]")
 
     opt.add_option('--enable-pkg-config-dbus-service-dir', action='store_true', default=False, help='force D-Bus service install dir to be one returned by pkg-config')
 
